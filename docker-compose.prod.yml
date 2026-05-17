@@ -1,0 +1,33 @@
+# 生产环境配置 (Production)
+# 启动方式: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  frontend:
+    build:
+      target: prod
+    ports:
+      - "80:80"
+    # 在生产环境中，代码已经被打包到镜像中，不需要挂载代码卷
+    # 产品首页开关（与 docker-compose.yml 合并；可在此覆盖）：
+    # environment:
+    #   - ENABLE_LANDING_PAGE=false
+
+  backend:
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+    # 生产环境中推荐去除 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+
+  celery:
+    environment:
+      - ENVIRONMENT=production
+
+  db:
+    # 生产环境通常不暴露数据库端口，或者配置严格的防火墙
+    # 这里保持不暴露
+
+  redis:
+    # 生产环境通常不暴露 Redis 端口
+    # 这里保持不暴露

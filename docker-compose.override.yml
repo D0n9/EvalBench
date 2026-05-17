@@ -1,0 +1,46 @@
+# ==============================================================================
+# Development Environment Configuration
+# ==============================================================================
+# docker-compose 默认会自动加载此文件并与 docker-compose.yml 合并
+# Usage: docker-compose up (development mode)
+
+services:
+  frontend:
+    build:
+      target: dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=http://localhost:8000/api/v1
+      # 开发模式不走 nginx entrypoint；产品首页开关请改 frontend/public/runtime-config.js 中的 enableLandingPage
+    command: pnpm run dev --host 0.0.0.0
+
+  backend:
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - evalscope_datasets:/workspace/datasets
+    environment:
+      - ENVIRONMENT=development
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  celery:
+    volumes:
+      - ./backend:/app
+      - ~/.cache/modelscope:/root/.cache/modelscope
+      - evalscope_datasets:/workspace/datasets
+      - evalscope_outputs:/workspace/outputs
+    environment:
+      - ENVIRONMENT=development
+
+  # 生产环境通常不暴露数据库端口，或者配置严格的防火墙
+  db:
+    restart: unless-stopped
+
+  redis:
+    restart: unless-stopped

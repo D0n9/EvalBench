@@ -1,0 +1,77 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    # 产品首页：true/1/yes/on 为开启（默认），false/0/no/off 为关闭（/ 重定向到登录页）。仅生产镜像 nginx 启动时写入 runtime-config.js 生效。
+    environment:
+      - ENABLE_LANDING_PAGE=true
+    depends_on:
+      - backend
+    networks:
+      - eval_net
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - evalscope_outputs:/workspace/outputs
+      - evalscope_datasets:/workspace/datasets
+      - ~/.cache/modelscope:/root/.cache/modelscope
+    depends_on:
+      - db
+      - redis
+    networks:
+      - eval_net
+    restart: unless-stopped
+
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    entrypoint: ["/usr/local/bin/celery-entrypoint.sh"]
+    command: celery -A app.core.celery_app worker --loglevel=info
+    env_file:
+      - .env
+    volumes:
+      - evalscope_outputs:/workspace/outputs
+      - evalscope_datasets:/workspace/datasets
+      - ~/.cache/modelscope:/root/.cache/modelscope
+    depends_on:
+      - db
+      - redis
+    networks:
+      - eval_net
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    env_file:
+      - .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - eval_net
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redisdata:/data
+    networks:
+      - eval_net
+    restart: unless-stopped
+
+networks:
+  eval_net:
+    driver: bridge
+
+volumes:
+  pgdata:
+  redisdata:
+  evalscope_outputs:
+  evalscope_datasets:

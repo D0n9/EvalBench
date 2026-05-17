@@ -1,0 +1,49 @@
+# Git
+.git
+.gitignore
+
+# Node modules
+node_modules
+
+# Build output (rebuilt during docker build)
+dist
+
+# Development files
+.env
+.env.local
+.env.*.local
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage
+.nyc_output
+.pytest_cache
+
+# Documentation
+*.md
+docs/
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Misc
+*.tsbuildinfo
+.eslintcache
+.stylelintcache

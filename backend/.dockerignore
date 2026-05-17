@@ -1,0 +1,65 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info
+dist
+build
+
+# Virtual environments
+.venv
+venv/
+ENV/
+env/
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Documentation
+*.md
+docs/
+
+# Local development
+.env
+.env.local
+.env.*.local
+*.log
+
+# Test files
+tests/
+test/
+*_test.py
+test_*.py
+
+# Celery beat schedule
+celerybeat-schedule
+celerybeat.pid
+
+# Uvicorn
+*.pid
